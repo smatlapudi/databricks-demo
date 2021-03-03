@@ -55,6 +55,7 @@ print('spark_checkpoint_dir: {}'.format(spark_checkpoint_dir))
 
 # DBTITLE 1,Read Staged Data with Stream
 source_schema = stage_data_schema_catalog[source_data_schema_name]
+
 source_df = (
   spark
   .readStream
