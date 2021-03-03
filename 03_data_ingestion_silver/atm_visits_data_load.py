@@ -1,9 +1,10 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ### ATM_VISITS (Silver Layer) table load
+# MAGIC ### ATM_VISITS Table load (Silver Layer)
 # MAGIC 
 # MAGIC > **This table is Fact table**
 # MAGIC - So we need dedupping
+# MAGIC - [Delta Lake - Databricks Docuemntation](https://docs.databricks.com/delta/delta-update.html)
 
 # COMMAND ----------
 
@@ -51,6 +52,8 @@ source_df = (
 
 # MAGIC %md
 # MAGIC #### 3. Prepare Data for target table
+# MAGIC 
+# MAGIC > **Note:** Handle deduping within the input here ( Not implemented below)
 
 # COMMAND ----------
 

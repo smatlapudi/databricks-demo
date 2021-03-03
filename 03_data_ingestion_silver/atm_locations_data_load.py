@@ -1,9 +1,10 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ### ATM_LOCATIONS (Silver Layer) table load
+# MAGIC ### ATM_LOCATIONS Table load (Silver Layer)
 # MAGIC 
 # MAGIC > **This table is Type-1 Dimension**
 # MAGIC - So we need to overwrite the old value (UPSERT/MERGE)
+# MAGIC - [Delta Lake - Databricks Docuemntation](https://docs.databricks.com/delta/delta-update.html)
 
 # COMMAND ----------
 
@@ -20,7 +21,7 @@ dbutils.widgets.text('spark_checkpoint_root', '')
 
 import os
 
-table_name = 'atm_locations'
+table_name = 'atm_customers'
 source_table = "{}.{}".format( dbutils.widgets.get('bronze_schema'),  table_name)
 target_table = "{}.{}".format( dbutils.widgets.get('silver_schema'),  table_name)
 spark_checkpoint_dir = os.path.join( 
@@ -51,6 +52,8 @@ source_df = (
 
 # MAGIC %md
 # MAGIC #### 3. Prepare Data for target table
+# MAGIC 
+# MAGIC > **Note:** Handle deduping within the input here ( Not implemented below)
 
 # COMMAND ----------
 

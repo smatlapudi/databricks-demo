@@ -4,8 +4,8 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT bronze_schema  DEFAULT "paypal_bronze";
-CREATE WIDGET TEXT bronze_location_root  DEFAULT "/mnt/oetrta/sureshm/demo-data/bronze";
+CREATE WIDGET TEXT bronze_schema  DEFAULT "";
+CREATE WIDGET TEXT bronze_location_root  DEFAULT "";
 
 -- COMMAND ----------
 

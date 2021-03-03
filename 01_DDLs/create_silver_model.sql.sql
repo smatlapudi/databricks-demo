@@ -4,13 +4,82 @@
 
 -- COMMAND ----------
 
-CREATE WIDGET TEXT silver_schema  DEFAULT "paypal_silver";
-CREATE WIDGET TEXT silver_location_root  DEFAULT "/mnt/oetrta/sureshm/demo-data/silver";
+CREATE WIDGET TEXT silver_schema  DEFAULT "";
+CREATE WIDGET TEXT silver_location_root  DEFAULT "";
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Create Schema for Silver layer tables
 create database if not exists $silver_schema;
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ### 01. Dimension Tables
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC #### atm_customers
+
+-- COMMAND ----------
+
+-- DBTITLE 1,atm_customers table
+drop table if exists $silver_schema.atm_customers
+;
+create table $silver_schema.atm_customers
+(
+    customer_id BIGINT,
+    card_number BIGINT,
+    checking_savings STRING,
+    first_name STRING,
+    last_name STRING,
+    customer_since_date DATE,
+    preferred INT,
+    current BOOLEAN,
+    effective_date date,
+    end_date date,
+    load_ts TIMESTAMP,
+    update_ts TIMESTAMP
+)
+using delta
+location '$silver_location_root/atm_customers'
+;
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC #### atm_locations
+
+-- COMMAND ----------
+
+-- DBTITLE 1,atm_locations table
+drop table if exists $silver_schema.atm_locations
+;
+create table $silver_schema.atm_locations
+(
+    atm_id BIGINT,
+    city STRING, 
+    state STRING, 
+    zip STRING,
+    pos_capability STRING,
+    offsite_or_onsite STRING,
+    bank STRING,
+    load_ts date
+)
+using delta
+location '$silver_location_root/atm_locations'
+;
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ### 01. Fact Tables
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC #### atm_visits
 
 -- COMMAND ----------
 
@@ -32,47 +101,4 @@ create table $silver_schema.atm_visits
 using delta
 PARTITIONED BY (date)
 location '$silver_location_root/atm_visits'
-;
-
--- COMMAND ----------
-
--- DBTITLE 1,atm_customers table
-drop table if exists $silver_schema.atm_customers
-;
-create table $silver_schema.atm_customers
-(
-    customer_id BIGINT,
-    card_number BIGINT,
-    checking_savings STRING,
-    first_name STRING,
-    last_name STRING,
-    customer_since_date DATE,
-    preferred INT,
-    current BOOLEAN,
-    effective_date date,
-    end_date date,
-    load_ts date
-)
-using delta
-location '$silver_location_root/atm_customers'
-;
-
--- COMMAND ----------
-
--- DBTITLE 1,atm_locations table
-drop table if exists $silver_schema.atm_locations
-;
-create table $silver_schema.atm_locations
-(
-    atm_id BIGINT,
-    city STRING, 
-    state STRING, 
-    zip STRING,
-    pos_capability STRING,
-    offsite_or_onsite STRING,
-    bank STRING,
-    load_ts date
-)
-using delta
-location '$silver_location_root/atm_locations'
 ;
