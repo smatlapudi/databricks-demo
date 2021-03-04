@@ -5,12 +5,20 @@
 # MAGIC > **This table is Fact table**
 # MAGIC - So we need dedupping
 # MAGIC - [Delta Lake - Databricks Docuemntation](https://docs.databricks.com/delta/delta-update.html)
+# MAGIC 
+# MAGIC 
+# MAGIC > Takes following Paramater
+# MAGIC - bronze_schema
+# MAGIC - silver_schema
+# MAGIC - spark_checkpoint_root
+# MAGIC - trigger_mode ( defaults to Batch)
 
 # COMMAND ----------
 
 dbutils.widgets.text('bronze_schema', '')
 dbutils.widgets.text('silver_schema', '')
 dbutils.widgets.text('spark_checkpoint_root', '')
+dbutils.widgets.dropdown("trigger_mode", "Batch", ['Batch', 'Streaming'])
 
 # COMMAND ----------
 
@@ -96,6 +104,13 @@ def upsertToTaget(outputDF, batchId):
 
 # COMMAND ----------
 
+triggerType = { 'once': True}
+if dbutils.widgets.get('trigger_mode') == 'Streaming':
+  triggerType = { 'processingTime': '15 seconds'}
+print(triggerType)
+
+# COMMAND ----------
+
 # DBTITLE 1,Write Query
 write_query = (
   prepared_df
@@ -104,7 +119,7 @@ write_query = (
   .foreachBatch(upsertToTaget)
   .outputMode("update")
   .option("checkpointLocation", spark_checkpoint_dir)
-  .trigger(once=True)
+  .trigger(**triggerType)
 )
 
 # COMMAND ----------
@@ -115,6 +130,9 @@ write_query = (
 # COMMAND ----------
 
 query = write_query.start()
+
+# COMMAND ----------
+
 query.awaitTermination()
 
 # COMMAND ----------

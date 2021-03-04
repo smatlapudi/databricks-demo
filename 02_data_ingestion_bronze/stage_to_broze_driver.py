@@ -8,6 +8,7 @@
 # MAGIC - bronze_schema
 # MAGIC - bronze_table
 # MAGIC - spark_checkpoint_root
+# MAGIC - trigger_mode ( defaults to Batch)
 
 # COMMAND ----------
 
@@ -16,6 +17,7 @@ dbutils.widgets.text('stage_folder', '')
 dbutils.widgets.text('bronze_schema', '')
 dbutils.widgets.text('bronze_table', '')
 dbutils.widgets.text('spark_checkpoint_root', '')
+dbutils.widgets.dropdown("trigger_mode", "Batch", ['Batch', 'Streaming'])
 
 # COMMAND ----------
 
@@ -72,6 +74,13 @@ source_df = (
 
 # COMMAND ----------
 
+triggerType = { 'once': True}
+if dbutils.widgets.get('trigger_mode') == 'Streaming':
+  triggerType = { 'processingTime': '15 seconds'}
+print(triggerType)
+
+# COMMAND ----------
+
 # DBTITLE 1,Define Write Stream
 write_query = (
   source_df
@@ -79,7 +88,7 @@ write_query = (
   .format('delta')
   .outputMode("append")
   .option("checkpointLocation", spark_checkpoint_dir)
-  .trigger(once=True)
+  .trigger(**triggerType)
 )
 
 # COMMAND ----------
@@ -91,6 +100,9 @@ write_query = (
 
 # DBTITLE 1,Write to Target Table
 query = write_query.table(target_table)
+
+# COMMAND ----------
+
 query.awaitTermination()
 
 # COMMAND ----------
