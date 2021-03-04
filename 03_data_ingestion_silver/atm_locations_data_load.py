@@ -21,7 +21,7 @@ dbutils.widgets.text('spark_checkpoint_root', '')
 
 import os
 
-table_name = 'atm_customers'
+table_name = 'atm_locations'
 source_table = "{}.{}".format( dbutils.widgets.get('bronze_schema'),  table_name)
 target_table = "{}.{}".format( dbutils.widgets.get('silver_schema'),  table_name)
 spark_checkpoint_dir = os.path.join( 
@@ -117,6 +117,7 @@ write_query = (
 # COMMAND ----------
 
 query = write_query.start()
+query.awaitTermination()
 
 # COMMAND ----------
 

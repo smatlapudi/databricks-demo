@@ -80,6 +80,9 @@ location '$silver_location_root/atm_locations'
 
 -- MAGIC %md
 -- MAGIC #### atm_visits
+-- MAGIC > Note:
+-- MAGIC - Partition Key is **transaction_dt**
+-- MAGIC - **customer_id** is good for z-ordering (High Cardinality)
 
 -- COMMAND ----------
 
@@ -95,10 +98,10 @@ create table $silver_schema.atm_visits
     amount BIGINT,
     fraud_report STRING,
     transaction_ts TIMESTAMP,
-    date DATE,
+    transaction_dt DATE,    
     load_ts TIMESTAMP
 )
 using delta
-PARTITIONED BY (date)
+PARTITIONED BY (transaction_dt)
 location '$silver_location_root/atm_visits'
 ;

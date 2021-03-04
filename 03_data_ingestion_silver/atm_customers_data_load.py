@@ -263,6 +263,7 @@ write_query = (
 # COMMAND ----------
 
 query = write_query.start()
+query.awaitTermination()
 
 # COMMAND ----------
 

@@ -91,6 +91,7 @@ write_query = (
 
 # DBTITLE 1,Write to Target Table
 query = write_query.table(target_table)
+query.awaitTermination()
 
 # COMMAND ----------
 

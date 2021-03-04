@@ -62,11 +62,12 @@ spark.table(target_table).printSchema()
 
 # COMMAND ----------
 
-# DBTITLE 1,Add load_ts
-from pyspark.sql.functions import current_timestamp
+# DBTITLE 1,Required transformations here
+from pyspark.sql.functions import current_timestamp, to_date
 
 prepared_df = (
   source_df
+  .withColumn('transaction_dt', to_date('transaction_ts'))
   .withColumn('load_ts', current_timestamp())
 )
 
@@ -114,6 +115,7 @@ write_query = (
 # COMMAND ----------
 
 query = write_query.start()
+query.awaitTermination()
 
 # COMMAND ----------
 
